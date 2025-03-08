@@ -54,7 +54,7 @@ const Summary = () => {
       
       {/* Sample Questions with Responses in Tabs */}
       <div className="bg-gray-800 bg-opacity-70 p-4 rounded text-center">
-        <h3 className="text-lg font-bold">💬 Sample Queries and Chatbot Responses</h3>
+        <h3 className="text-lg font-bold">💬 Queries and Chatbot Responses</h3>
         <Tab.Group>
           <Tab.List className="flex flex-wrap justify-center p-2 gap-2">
             {Object.keys(questionCategories).map((category) => (
@@ -91,12 +91,12 @@ const Summary = () => {
           { name: "Week 2", queries: 35 },
           { name: "Week 3", queries: 50 },
           { name: "Week 4", queries: 45 },
-        ]}>
-          <XAxis dataKey="name" stroke="#fff" />
-          <YAxis stroke="#fff" />
-          <Tooltip />
-          <Legend />
-          <Bar dataKey="queries" fill="#a855f7" />
+        ]} className="mx-auto">
+          <XAxis dataKey="name" stroke="#fff" tick={{ fill: '#fff' }} />
+          <YAxis stroke="#fff" tick={{ fill: '#fff' }} />
+          <Tooltip cursor={{ fill: 'rgba(168, 85, 247, 0.2)' }} contentStyle={{ backgroundColor: "#333", borderRadius: "5px", color: "#fff" }} />
+          <Legend wrapperStyle={{ color: "#fff" }} />
+          <Bar dataKey="queries" fill="#a855f7" radius={[10, 10, 0, 0]} barSize={40} />
         </BarChart>
       </div>
     </div>
