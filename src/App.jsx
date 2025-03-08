@@ -4,7 +4,7 @@ import Home from "./components/Home";
 import Summary from "./components/Summary";
 import Specifications from "./components/Specifications";
 import History from "./components/History";
-
+import Test from "./components/Test";
 function App() {
   return (
     <Router>
@@ -16,6 +16,8 @@ function App() {
             <Route path="/summary" element={<Summary />} />
             <Route path="/specifications" element={<Specifications />} />
             <Route path="/history" element={<History />} />
+            <Route path="/test" element = {<Test />} />
+
           </Routes>
         </div>
       </div>

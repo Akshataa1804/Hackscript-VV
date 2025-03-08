@@ -25,10 +25,11 @@ const questionCategories = {
   "Hardware Issues": [
     { question: "Laptop not charging, what to do?", chatbotResponse: "Check power cable and battery status.", userReaction: "User wanted repair options." },
   ],
-  "Solution Proposed but Dissatisfied": [
-    { question: "My laptop keeps overheating, help!", chatbotResponse: "Ensure vents are clean and update BIOS.", userReaction: "User found the response insufficient." },
-  ],
 };
+
+const solutionDissatisfied = [
+  { question: "My laptop keeps overheating, help!", chatbotResponse: "Ensure vents are clean and update BIOS.", userReaction: "User found the response insufficient." },
+];
 
 const Summary = () => {
   return (
@@ -43,7 +44,7 @@ const Summary = () => {
       </motion.h2>
       
       {/* Performance Metrics */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-gray-800 bg-opacity-70 p-4 rounded">
+      <div className="grid grid-cols-2 md-grid-cols-4 gap-4 bg-gray-800 bg-opacity-70 p-4 rounded">
         {Object.entries(mockPerformance).map(([key, value]) => (
           <div key={key} className="text-center p-2 bg-gray-700 rounded-lg">
             <h3 className="text-lg font-bold">{key.replace(/([A-Z])/g, ' $1').trim()}</h3>
@@ -64,6 +65,11 @@ const Summary = () => {
                 {category}
               </Tab>
             ))}
+            <Tab key="Dissatisfied Responses" className={({ selected }) => 
+              `px-4 py-2 rounded-lg text-white transition-colors duration-200 ${selected ? 'bg-red-600' : 'bg-gray-700 hover:bg-gray-600'}`
+            }>
+              Solution Proposed but Dissatisfied
+            </Tab>
           </Tab.List>
           <Tab.Panels>
             {Object.entries(questionCategories).map(([category, questions]) => (
@@ -73,12 +79,23 @@ const Summary = () => {
                     <li key={index} className="py-2 border-b border-gray-600 p-3 bg-gray-700 rounded-lg mb-2">
                       <p className="font-bold text-purple-400">Q: {q.question}</p>
                       <p className="text-sm text-gray-300"><strong>Chatbot:</strong> {q.chatbotResponse}</p>
-                      <p className="text-sm text-red-400"><strong>User Feedback:</strong> {q.userReaction}</p>
+                      <p className="text-sm text-red-500"><strong>User Feedback:</strong> {q.userReaction}</p>
                     </li>
                   ))}
                 </ul>
               </Tab.Panel>
             ))}
+            <Tab.Panel className="p-4">
+              <ul className="list-none text-left mx-auto w-full md:w-3/4">
+                {solutionDissatisfied.map((q, index) => (
+                  <li key={index} className="py-2 border-b border-gray-600 p-3 bg-red-700 rounded-lg mb-2">
+                    <p className="font-bold text-purple-400">Q: {q.question}</p>
+                    <p className="text-sm text-gray-300"><strong>Chatbot:</strong> {q.chatbotResponse}</p>
+                    <p className="text-sm text-white"><strong>User Feedback:</strong> {q.userReaction}</p>
+                  </li>
+                ))}
+              </ul>
+            </Tab.Panel>
           </Tab.Panels>
         </Tab.Group>
       </div>
