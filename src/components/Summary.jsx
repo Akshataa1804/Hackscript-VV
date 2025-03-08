@@ -1,6 +1,7 @@
-import React from "react";
-import { LineChart, Line, PieChart, Pie, Cell, Tooltip, Legend, BarChart, Bar, XAxis, YAxis } from "recharts";
+import React, { useState } from "react";
+import { LineChart, Line, PieChart, Pie, Cell, Tooltip, Legend, XAxis, YAxis, BarChart, Bar } from "recharts";
 import { motion } from "framer-motion";
+import { Tab } from "@headlessui/react";
 
 const mockPerformance = {
   totalFiles: 25,
@@ -10,27 +11,24 @@ const mockPerformance = {
   frustratedResponses: 15,
 };
 
-const sentimentTrend = [
-  { date: "Mar 1", score: 0.6 },
-  { date: "Mar 5", score: 0.7 },
-  { date: "Mar 10", score: 0.75 },
-  { date: "Mar 15", score: 0.65 },
-  { date: "Mar 20", score: 0.68 },
-];
-
-const cumulativeAnalysis = [
-  { period: "Week 1", score: 0.65 },
-  { period: "Week 2", score: 0.7 },
-  { period: "Week 3", score: 0.75 },
-  { period: "Week 4", score: 0.68 },
-];
-
-const questionTypes = [
-  { name: "Repetitive", value: 30 },
-  { name: "Frustrated", value: 15 },
-  { name: "Clarification", value: 25 },
-  { name: "Acknowledgements", value: 30 },
-];
+const questionCategories = {
+  "Repetitive Queries": [
+    { question: "How to check my order status?", chatbotResponse: "Go to My Orders section.", userReaction: "User wanted direct tracking link." },
+    { question: "What is the return policy?", chatbotResponse: "Returns accepted within 14 days.", userReaction: "User wanted extended return options." },
+  ],
+  "Technical Queries": [
+    { question: "How do I update drivers?", chatbotResponse: "Visit the manufacturer’s website.", userReaction: "User wanted a step-by-step guide." },
+  ],
+  "Software Issues": [
+    { question: "Why is my laptop running slow?", chatbotResponse: "Try clearing temp files and updating software.", userReaction: "User wanted a diagnostic tool recommendation." },
+  ],
+  "Hardware Issues": [
+    { question: "Laptop not charging, what to do?", chatbotResponse: "Check power cable and battery status.", userReaction: "User wanted repair options." },
+  ],
+  "Solution Proposed but Dissatisfied": [
+    { question: "My laptop keeps overheating, help!", chatbotResponse: "Ensure vents are clean and update BIOS.", userReaction: "User found the response insufficient." },
+  ],
+};
 
 const Summary = () => {
   return (
@@ -45,48 +43,61 @@ const Summary = () => {
       </motion.h2>
       
       {/* Performance Metrics */}
-      <div className="bg-gray-800 bg-opacity-70 p-4 rounded grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-        <div><span className="font-bold">🔍 Files Analyzed:</span> {mockPerformance.totalFiles}</div>
-        <div><span className="font-bold">📈 Avg Sentiment:</span> {mockPerformance.avgSentiment}</div>
-        <div><span className="font-bold">✅ Response Effectiveness:</span> {mockPerformance.responseEffectiveness}%</div>
-        <div><span className="font-bold">🔁 Repetitive Queries:</span> {mockPerformance.repetitiveQueries}%</div>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-gray-800 bg-opacity-70 p-4 rounded">
+        {Object.entries(mockPerformance).map(([key, value]) => (
+          <div key={key} className="text-center p-2 bg-gray-700 rounded-lg">
+            <h3 className="text-lg font-bold">{key.replace(/([A-Z])/g, ' $1').trim()}</h3>
+            <p className="text-xl font-semibold">{value}{typeof value === "number" && key.includes("Effectiveness") ? "%" : ""}</p>
+          </div>
+        ))}
       </div>
       
-      {/* Weekly & Monthly Analysis */}
+      {/* Sample Questions with Responses in Tabs */}
       <div className="bg-gray-800 bg-opacity-70 p-4 rounded text-center">
-        <h3 className="text-lg font-bold">📅 Weekly & Monthly Sentiment Analysis</h3>
-        <BarChart width={350} height={200} data={cumulativeAnalysis} className="mx-auto">
-          <XAxis dataKey="period" />
-          <YAxis domain={[0.5, 1]} />
-          <Tooltip />
-          <Bar dataKey="score" fill="#82ca9d" />
-        </BarChart>
-        <button className="mt-4 px-4 py-2 bg-blue-600 rounded text-white hover:bg-blue-700">📥 Export Analysis</button>
-      </div>
-
-      {/* Sentiment Trend */}
-      <div className="bg-gray-800 bg-opacity-70 p-4 rounded text-center">
-        <h3 className="text-lg font-bold">📅 Sentiment Trend Over Time</h3>
-        <LineChart width={350} height={200} data={sentimentTrend} className="mx-auto">
-          <XAxis dataKey="date" />
-          <YAxis domain={[0.5, 1]} />
-          <Tooltip />
-          <Line type="monotone" dataKey="score" stroke="#82ca9d" strokeWidth={2} />
-        </LineChart>
-      </div>
-
-      {/* Question Types */}
-      <div className="bg-gray-800 bg-opacity-70 p-4 rounded text-center">
-        <h3 className="text-lg font-bold">💬 Types of Questions</h3>
-        <PieChart width={250} height={250} className="mx-auto">
-          <Pie data={questionTypes} cx={125} cy={125} outerRadius={80} fill="#8884d8" dataKey="value">
-            {questionTypes.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={["#FF5722", "#F44336", "#FF9800", "#4CAF50"][index]} />
+        <h3 className="text-lg font-bold">💬 Sample Queries and Chatbot Responses</h3>
+        <Tab.Group>
+          <Tab.List className="flex flex-wrap justify-center p-2 gap-2">
+            {Object.keys(questionCategories).map((category) => (
+              <Tab key={category} className={({ selected }) => 
+                `px-4 py-2 rounded-lg text-white transition-colors duration-200 ${selected ? 'bg-purple-600' : 'bg-gray-700 hover:bg-gray-600'}`
+              }>
+                {category}
+              </Tab>
             ))}
-          </Pie>
+          </Tab.List>
+          <Tab.Panels>
+            {Object.entries(questionCategories).map(([category, questions]) => (
+              <Tab.Panel key={category} className="p-4">
+                <ul className="list-none text-left mx-auto w-full md:w-3/4">
+                  {questions.map((q, index) => (
+                    <li key={index} className="py-2 border-b border-gray-600 p-3 bg-gray-700 rounded-lg mb-2">
+                      <p className="font-bold text-purple-400">Q: {q.question}</p>
+                      <p className="text-sm text-gray-300"><strong>Chatbot:</strong> {q.chatbotResponse}</p>
+                      <p className="text-sm text-red-400"><strong>User Feedback:</strong> {q.userReaction}</p>
+                    </li>
+                  ))}
+                </ul>
+              </Tab.Panel>
+            ))}
+          </Tab.Panels>
+        </Tab.Group>
+      </div>
+      
+      {/* Monthly and Time-Based Analysis */}
+      <div className="bg-gray-800 bg-opacity-70 p-4 rounded text-center">
+        <h3 className="text-lg font-bold">📆 Time-Based Analysis</h3>
+        <BarChart width={500} height={300} data={[
+          { name: "Week 1", queries: 40 },
+          { name: "Week 2", queries: 35 },
+          { name: "Week 3", queries: 50 },
+          { name: "Week 4", queries: 45 },
+        ]}>
+          <XAxis dataKey="name" stroke="#fff" />
+          <YAxis stroke="#fff" />
           <Tooltip />
           <Legend />
-        </PieChart>
+          <Bar dataKey="queries" fill="#a855f7" />
+        </BarChart>
       </div>
     </div>
   );
